@@ -51,10 +51,10 @@ exports.newUser = (req, res) => {
 exports.find = (req, res) => {
     Schema.find()
     .then((data) => {
-        res.status(200).send(data);
+        return res.status(200).send(data);
     })
     .catch((err) => {
-        res.status(500).send({
+        return res.status(500).send({
             message:
             err.message || 'some error ocurred while retrieving data.',
         });
@@ -68,7 +68,7 @@ exports.findById = (req, res) => {
         if(!data) {
             return res.status(404).send({ message: 'data not found with id ' + req.params.id + '. Make sure the id was correct' });
         }
-        res.send(data);
+        return res.status(200).send(data);
     })
     .catch((err) => {
         if(err.kind === 'ObjectId') {
