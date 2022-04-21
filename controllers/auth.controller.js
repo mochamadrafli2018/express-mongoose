@@ -7,24 +7,24 @@ exports.signIn = (req, res) => {
     // validate request
     let {email,password} = req.body;
     console.log(req.body);
-    if (!email) { return res.status(400).send({ message: 'Email harus di isi !' }); }
-    if (!password) { return res.status(400).send({ message: 'Password harus di isi !' }); }
-    if (password.length < 8) { return res.status(400).send({ message: 'Password harus sama dengan atau lebih dari 8 karakter !' }); }
+    if (!email) return res.status(400).send({ message: 'Email must be filled !' });
+    if (!password) return res.status(400).send({ message: 'Password must be filled !' });
+    if (password.length < 8) return res.status(400).send({ message: 'Password must be equal or more than 8 character !' });
     // check email already exist or not
     try {
         Schema.findOne({ email: email }).then((user)=>{
             if (!user) {
-                console.log('Email tidak ditemukan pada database.');
-                return res.status(500).send({ message: 'Email tidak terdaftar, silahkan daftar terlebih dahulu.'}); 
+                console.log('Email not found in database.');
+                return res.status(404).send({ message: 'Email not found, please register!.'}); 
             }
             else if (user) {
-                console.log('Email ditemukan pada database.');
+                console.log('Email found in database.');
                 // comparing passwords
                 var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
                 if (!passwordIsValid) {
-                    console.log('Email terdaftar, tapi password salah.');
-                    return res.status(409).send({
-                        message: 'Email terdaftar, tapi password salah.',
+                    console.log('Email registered, but password is wrong.');
+                    return res.status(401).send({
+                        message: 'Email registered, but password is wrong.',
                         token: null,
                     });
                 }
@@ -35,7 +35,7 @@ exports.signIn = (req, res) => {
                         process.env.JWT_SECRET,
                         {expiresIn: 86400},
                     );
-                    console.log('Berhasil masuk.');
+                    console.log('Authenticated!');
                     console.log('Token: ', accessToken);
                     return res.status(200).send({
                         user: {
@@ -50,7 +50,7 @@ exports.signIn = (req, res) => {
             }
         })
     }
-    catch(err) { return res.status(500).send({ message: err || 'Coba cek koneksi internetmu.'}); }
+    catch(err) { return res.status(500).send({ message: err || 'An error occured.'}); }
 }
 
 // user authorization with verify the access token

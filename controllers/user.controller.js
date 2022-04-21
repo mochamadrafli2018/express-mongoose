@@ -6,13 +6,13 @@ exports.newUser = (req, res) => {
     // validate requests
     let {name,email,password,gender,role} = req.body;
     console.log(req.body);
-    if (!req.body) { return res.status(400).send({ message: 'Data harus di isi !' }); }
-    if (!name) { return res.status(400).send({ message: 'Nama harus di isi !' }); }
-    if (!email) { return res.status(400).send({ message: 'Email harus di isi !' }); }
-    if (!password) { return res.status(400).send({ message: 'Password harus di isi !' }); }
-    if (password.length < 8) { return res.status(400).send({ message: 'Password harus sama dengan atau lebih dari 8 karakter !' }); }
-    if (!gender) { return res.status(400).send({ message: 'Jenis kelamin harus di isi !' }); }
-    if (!role) { return res.status(400).send({ message: 'Role harus di isi !' }); }
+    if (!req.body) return res.status(400).send({ message:"Content can not be empty!" });
+    if (!req.body.name) return res.status(400).send({ message:"Name can not be empty!" });
+    if (!req.body.email) return res.status(400).send({ message:"Email can not be empty!" });
+    if (!req.body.password) return res.status(400).send({ message:"Password can not be empty!" });
+    if (req.body.password.length < 8) return res.status(400).send({ message: 'Password must be equal or more than 8 character!' });
+    if (!req.body.gender) return res.status(400).send({ message:"Gender can not be empty!" });
+    if (!req.body.role) return res.status(400).send({ message:"Role can not be empty!" });
     // check if email already exist
     try {
         Schema.findOne({ email }).then((user)=>{
@@ -30,15 +30,15 @@ exports.newUser = (req, res) => {
                     role: role,
                     updatedScreeningResult: "",
                 });
-                console.log(newUser);           
+                console.log(newUser);
                 newUser.save().then(user => {
-                    console.log('Pendaftaran berhasil.');
+                    console.log('Register success.');
                     // auto sign in token create from user id
                     var accessToken = jwt.sign(
                         {id: user._id}, process.env.JWT_SECRET, {expiresIn: 86400},
                     );
-                    console.log('Berhasil masuk.');
                     console.log('Token: ', accessToken);
+
                     return res.status(200).send({
                         message: 'Pendaftaran berhasil.',
                         user: {
@@ -51,10 +51,10 @@ exports.newUser = (req, res) => {
                     });
                 }).catch(err => {
                     console.log(err)
-                    return res.status(500).send({ message: err || 'Pendaftaran gagal.' });
+                    return res.status(500).send({ message: err.message || 'Register fail.' });
                 });
             }
-            else if (user) { return res.status(409).send({ message: 'Email sudah terdaftar, silahkan masuk.' }); }
+            else if (user) { return res.status(409).send({ message: 'Email have been registered, please login.' }); }
         })
     }
     catch(err) { return res.status(500).send({ message: err || 'Coba cek koneksi internetmu.'}); }

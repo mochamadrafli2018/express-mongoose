@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const createError = require('http-errors');
+
+// enable env variable
 require('dotenv').config();
 
 // cors
