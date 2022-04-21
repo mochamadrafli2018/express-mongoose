@@ -1,5 +1,6 @@
 const Schema = require('../models/user.schema');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.newUser = (req, res) => {
     // validate requests
@@ -30,11 +31,23 @@ exports.newUser = (req, res) => {
                     updatedScreeningResult: "",
                 });
                 console.log(newUser);           
-                newUser.save().then(data => {
+                newUser.save().then(user => {
                     console.log('Pendaftaran berhasil.');
-                    return res.status(201).send({
+                    // auto sign in token create from user id
+                    var accessToken = jwt.sign(
+                        {id: user._id}, process.env.JWT_SECRET, {expiresIn: 86400},
+                    );
+                    console.log('Berhasil masuk.');
+                    console.log('Token: ', accessToken);
+                    return res.status(200).send({
                         message: 'Pendaftaran berhasil.',
-                        data: data,
+                        user: {
+                            id: user._id,
+                            name: user.name,
+                            email: user.email,
+                            role: user.role,
+                        },
+                        token: accessToken,
                     });
                 }).catch(err => {
                     console.log(err)

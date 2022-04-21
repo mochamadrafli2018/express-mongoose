@@ -29,7 +29,7 @@ exports.signIn = (req, res) => {
                     });
                 }
                 else if (passwordIsValid) {
-                    // signing token with user id
+                    // sign in token create from user id
                     var accessToken = jwt.sign(
                         {id: user._id},
                         process.env.JWT_SECRET,
