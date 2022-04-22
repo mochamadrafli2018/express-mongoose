@@ -109,7 +109,7 @@ exports.findOneAndUpdate = (req, res) => {
         if (req.body.gender) { newGender = req.body.gender}
         if (req.body.role) { newRole = req.body.role}
         if (req.body.updatedScreeningResult) { newUpdatedScreeningResult = req.body.updatedScreeningResult}
-        const newData = new Schema({
+        const newData = Schema({
             name: newName,
             email: newEmail,
             password: newPassword,
@@ -120,9 +120,7 @@ exports.findOneAndUpdate = (req, res) => {
         });
         console.log(newData)
         // update with new data
-        Schema.findByIdAndUpdate({
-            _id: req.params.id}, newData, { new: true }
-        )
+        Schema.findByIdAndUpdate( {_id: req.params.id}, newData, { new: true } )
         .then((updatedData) => {
             console.log('success update data');
             return res.status(200).send(updatedData);
