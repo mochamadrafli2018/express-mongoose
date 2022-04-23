@@ -1,4 +1,4 @@
-## Express (4.17.3) and Mongoose (6.1.4) with Auth and CRUD Application
+## Express (4.17.3) and Mongoose (6.3.1) with Auth and CRUD Application
 
 ### Requirement
 
